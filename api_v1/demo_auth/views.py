@@ -11,18 +11,6 @@ router = APIRouter(prefix="/oauth", tags=["Demo Auth"])
 security = HTTPBasic()
 
 
-@router.get("/basic-auth/")
-def demo_basic_auth_credentials(
-    credentials: Annotated[HTTPBasicCredentials, Depends(security)],
-):
-    return {
-        "message": "Hi!",
-        "username": credentials.username,
-        "password": credentials.password,
-        "active": True,
-    }
-
-
 usernames_to_passwords = {
     "admin": "admin",
     "john": "password",
@@ -43,7 +31,6 @@ def get_auth_user_username(
         detail="Invalid username or password",
         headers={"Authenticate": "Basic"},
     )
-    print(credentials.username, credentials.password)
     correct_password = usernames_to_passwords.get(credentials.username)
     if correct_password is None:
         raise unauthed_exc
@@ -80,12 +67,22 @@ def demo_basic_auth_username(
     }
 
 
+@router.get("/basic-auth/")
+def demo_basic_auth_credentials(
+    auth_username: str = Depends(get_auth_user_username),
+):
+    return {
+        "username": auth_username,
+        "active": True,
+    }
+
+
 @router.get("/token-introspection/")
 def demo_basic_token_introspection(
     auth_username: str = Depends(get_auth_user_username),
 ):
-    print(auth_username)
     return {
+        "username": auth_username,
         "active": True,
     }
 

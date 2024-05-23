@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from .products.views import router as products_router
+from .users.views import router as users_router
 from .demo_auth.views import router as demo_auth_router
 
 router = APIRouter()
-router.include_router(router=products_router, prefix="/products")
-router.include_router(router=demo_auth_router)
+router.include_router(router=users_router, prefix="/oauth/users")
+router.include_router(router=demo_auth_router, prefix="/oauth")
